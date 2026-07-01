@@ -1,26 +1,121 @@
 @import "tailwindcss";
 
+/*
+  «Ам Дом» — фирменная палитра.
+  Тема залочена в один light-режим: бренд задан двумя цветами
+  (глубокий лес #004741 + костяной #F0EDE4), инверсия в dark сломала бы
+  узнаваемость. Единственный акцент на всю страницу — тёплый янтарь.
+  Радиусы: кнопки — pill, карточки — 20px, инпуты — 12px (правило соблюдается везде).
+*/
+
+@theme {
+  --color-forest: #004741;
+  --color-forest-700: #0b564f;
+  --color-forest-600: #1a655d;
+  --color-bone: #f0ede4;
+  --color-bone-200: #e7e2d5;
+  --color-bone-300: #dcd6c6;
+  --color-amber: #cf934a;
+  --color-amber-soft: #e0b478;
+  --color-ink: #14211f;
+
+  --font-display: var(--font-manrope);
+  --font-body: var(--font-golos);
+
+  --radius-card: 20px;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f0ede4;
+  --foreground: #14211f;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #004741;
+  color: #f0ede4;
+}
+
+/* Тонкая фактура/зерно — только на фиксированном слое, без репейнтов при скролле */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+}
+
+.display {
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+}
+
+/* Диффузные тени, подкрашенные в лес (не чёрные drop-shadow) */
+.shadow-soft {
+  box-shadow: 0 18px 50px -24px rgba(0, 71, 65, 0.28);
+}
+.shadow-soft-lg {
+  box-shadow: 0 40px 90px -40px rgba(0, 71, 65, 0.4);
+}
+.shadow-float {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 12px 40px -18px rgba(0, 71, 65, 0.22);
+}
+
+/* Double-bezel: внутренний хайлайт для «машинной» глубины карточек */
+.bezel-inset {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[revealUp_0\.6s_var\(--ease-out-quint\)_both\] {
+    animation: none !important;
+  }
+}
+
+/* Ссылка-подчёркивание с ростом слева направо */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.4s var(--ease-out-quint);
+}
+.link-underline:hover {
+  background-size: 100% 1px;
 }
